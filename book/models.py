@@ -9,7 +9,7 @@ def book_image_file_path(instance, filename):
     _, extension = os.path.splitext(filename)
     filename = f"{slugify(instance)}-{uuid.uuid4()}{extension}"
 
-    return os.path.join("uploads", "social_media", filename)
+    return os.path.join("uploads", "books", filename)
 
 
 class Genre(models.Model):
@@ -37,4 +37,3 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
-
