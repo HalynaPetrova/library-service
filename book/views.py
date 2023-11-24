@@ -1,10 +1,16 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import filters
 
 from book.models import Genre, Book
-from book.serializers import GenreSerializer, BookSerializer, BookDetailSerializer, BookImageSerializer, \
-    BookListSerializer
+from book.serializers import (
+    GenreSerializer,
+    BookSerializer,
+    BookDetailSerializer,
+    BookImageSerializer,
+    BookListSerializer,
+)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -15,6 +21,8 @@ class GenreViewSet(viewsets.ModelViewSet):
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.select_related("genre", )
     serializer_class = BookSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["title", "author", "genre__name"]
 
     def get_serializer_class(self):
         if self.action == "list":

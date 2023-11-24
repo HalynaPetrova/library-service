@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "django_filters",
     "user",
     "book",
     "borrowing",
@@ -131,3 +132,11 @@ MEDIA_URL = "/media/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+STRIPE_PUBLISHABLE_KEY = "pk_test_51OFYbrCGQz4vFj5bBwAjO93rIeTx13Vpdow1JCBXqkAV8oxoqkYozxTBhtWx0PLe3jW912Woh1DpBvNvLswSmCjD00ruUTzauC"
+STRIPE_SECRET_KEY = "sk_test_51OFYbrCGQz4vFj5bgtmZOOtlTULXjIWVlt0c0uZBc7BSX0yVyw0z5N8yt3PWxkaNHZz1r3ioKMwhZAZ57QxKDPSD00OHlM4kZR"
+STRIPE_API_VERSION = "2023-10-16"
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
