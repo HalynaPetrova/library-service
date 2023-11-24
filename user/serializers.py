@@ -1,16 +1,37 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from borrowing.models import Borrowing
+
+
+class UserBorrowingSerializer(serializers.ModelSerializer):
+    book = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field="title",
+    )
+
+    class Meta:
+        model = Borrowing
+        fields = (
+            "id",
+            "book",
+            "borrow_date",
+            "expected_return",
+            "actual_return",
+            "is_active",
+        )
+
 
 class UserSerializer(serializers.ModelSerializer):
-    num_borrowings = serializers.SerializerMethodField()
-
-    def get_num_borrowings(self, obj):
-        return obj.borrowings.count()
+    borrowings = UserBorrowingSerializer(
+        many=True,
+        read_only=True,
+    )
 
     class Meta:
         model = get_user_model()
-        fields = ("id", "email", "password", "is_staff", "num_borrowings")
+        fields = ("id", "email", "password", "is_staff", "borrowings")
         read_only_fields = ("is_staff",)
         extra_kwargs = {"password": {"write_only": True, "min_length": 5}}
 

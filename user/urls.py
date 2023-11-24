@@ -1,9 +1,6 @@
 from django.urls import path
 
-from user.views import (
-    CreateUserView,
-    ManageUserView,
-)
+from user.views import CreateUserView, ManageUserView
 
 
 urlpatterns = [
