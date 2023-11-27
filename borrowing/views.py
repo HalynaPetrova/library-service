@@ -16,7 +16,6 @@ from borrowing.serializers import (
 
 class BorrowingViewSet(viewsets.ModelViewSet):
     queryset = Borrowing.objects.all()
-    serializer_class = BorrowingSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = BorrowingFilter
 

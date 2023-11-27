@@ -24,6 +24,10 @@ class BookViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ["title", "author", "genre__name"]
 
+    def get_queryset(self):
+        queryset = self.queryset.filter(inventory__gte=1)
+        return queryset
+
     def get_serializer_class(self):
         if self.action == "list":
             return BookListSerializer
