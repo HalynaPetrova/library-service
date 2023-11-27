@@ -1,7 +1,12 @@
+import calendar
 import datetime
+
 from rest_framework import serializers
-from book.serializers import BookListSerializer
+
+from book.serializers import BookSerializer, BookListSerializer
 from borrowing.models import Borrowing
+from payment.models import Payment
+from payment.stripo import create_stripe_session
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
@@ -9,8 +14,14 @@ class BorrowingSerializer(serializers.ModelSerializer):
         model = Borrowing
         fields = (
             "id",
-            "user",
             "book",
+            "borrow_date",
+            "expected_return",
+            "actual_return",
+            "is_active",
+        )
+        read_only_fields = (
+            "id",
             "borrow_date",
             "expected_return",
             "actual_return",
@@ -18,43 +29,65 @@ class BorrowingSerializer(serializers.ModelSerializer):
         )
 
 
-class BorrowingListSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(
-        many=False,
-        read_only=True,
-        slug_field="email",
-    )
-    book = serializers.SlugRelatedField(
-        many=False,
-        read_only=True,
-        slug_field="title",
-    )
+class BorrowingListSerializer(BorrowingSerializer):
+    book_title = serializers.CharField(source="book.title", read_only=True)
+    payments_count = serializers.SerializerMethodField()
+
+    def get_payments_count(self, obj):
+        return obj.payments.count()
 
     class Meta:
         model = Borrowing
         fields = (
             "id",
-            "user",
-            "book",
+            "book_title",
+            "borrow_date",
+            "expected_return",
+            "actual_return",
+            "payments_count",
+            "is_active",
+        )
+
+        read_only_fields = (
+            "id",
             "borrow_date",
             "expected_return",
             "actual_return",
             "is_active",
+        )
+
+
+class BorrowingPaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = (
+            "id",
+            "status",
+            "payment_type",
+            "session_url",
+            "session_id",
+            "money_to_pay",
         )
 
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
-    book = BookListSerializer(
-        many=False,
-        read_only=True
-    )
+    book = BookListSerializer(many=False, read_only=True)
+    payments = BorrowingPaymentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Borrowing
         fields = (
             "id",
-            "user",
             "book",
+            "borrow_date",
+            "expected_return",
+            "actual_return",
+            "payments",
+            "is_active",
+        )
+
+        read_only_fields = (
+            "id",
             "borrow_date",
             "expected_return",
             "actual_return",
@@ -67,61 +100,90 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         model = Borrowing
         fields = (
             "id",
-            "user",
             "book",
             "borrow_date",
             "expected_return",
+            "is_active",
         )
+
+        read_only_fields = (
+            "id",
+            "borrow_date",
+            "expected_return",
+            "is_active",
+        )
+
+    def validate(self, attrs):
+        book = attrs.get("book")
+
+        if book.inventory < 1:
+            raise serializers.ValidationError(
+                f"Unfortunately, this book is not available, please choose another."
+            )
+        return attrs
 
     def create(self, validated_data):
         book = validated_data["book"]
         user = self.context["request"].user
+        expected_return = datetime.date.today()
+        days_in_month = calendar.monthrange(expected_return.year, expected_return.month)[1]
+        expected_return += datetime.timedelta(days=days_in_month)
         borrowing = Borrowing.objects.create(
             book=book,
-            expected_return=validated_data["expected_return"],
             user=user,
+            expected_return=expected_return,
         )
         book.inventory -= 1
         book.save()
         return borrowing
 
-    # def validate(self, attrs):
-    #     book = attrs.get("book")
-    #     expected_return = attrs.get("expected_return")
-    #
-    #     if expected_return <= datetime.datetime.today():
-    #         raise serializers.ValidationError(
-    #             "Expected return date must " "be later than borrow date."
-    #         )
-    #
-    #     if book.inventory < 1:
-    #         raise serializers.ValidationError(
-    #             f"This book is for rent, please "
-    #             f"choose another one. End date of "
-    #             f"borrowing for this book "
-    #             f"{expected_return}"
-    #         )
-    #     return attrs
-
 
 class BorrowingReturnSerializer(serializers.ModelSerializer):
+    payments = BorrowingPaymentSerializer(many=True, read_only=True)
+    book_title = serializers.CharField(source="book.title", read_only=True)
+    message = serializers.CharField(
+        max_length=63,
+        default="Pay by link",
+        read_only=True,
+    )
+
     class Meta:
         model = Borrowing
         fields = (
             "id",
+            "book_title",
+            "borrow_date",
+            "expected_return",
+            "actual_return",
+            "is_active",
+            "message",
+            "payments",
+            "id",
         )
 
+        read_only_fields = (
+            "id",
+            "borrow_date",
+            "expected_return",
+            "actual_return",
+            "is_active",
+            "message",
+            "payments",
+        )
+
+    def validate(self, attrs):
+        borrowing = self.instance
+        if borrowing.actual_return:
+            raise serializers.ValidationError(
+                "This borrowing has already been returned."
+            )
+        return attrs
+
     def update(self, instance, validated_data):
-        num_book = instance.book.inventory
-        print(validated_data.get('inventory', instance.book.inventory))
-
-        print(num_book)
-        instance.actual_return = datetime.datetime.today()
-
-        print(num_book)
-
+        create_stripe_session(instance, self.context.get("request"))
+        instance.actual_return = datetime.date.today()
+        instance.is_active = False
+        instance.book.inventory += 1
         instance.book.save()
         instance.save()
-        num_book += 1
-        instance.book.save()
         return instance
