@@ -30,7 +30,7 @@ class Book(models.Model):
     cover = models.CharField(max_length=25, choices=Cover.choices, default=Cover.SOFT)
     image = models.ImageField(null=True, blank=True, upload_to=book_image_file_path)
     inventory = models.IntegerField()
-    daily_fee = models.DecimalField(max_digits=5, decimal_places=2)
+    daily_fee = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         ordering = ["title"]
