@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "book",
     "borrowing",
     "payment",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -113,9 +114,9 @@ LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "Europe/Kiev"
 
-USE_I18N = True
+USE_I18N = False
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -138,5 +139,22 @@ STRIPE_SECRET_KEY = "sk_test_51OFYbrCGQz4vFj5bgtmZOOtlTULXjIWVlt0c0uZBc7BSX0yVyw
 STRIPE_API_VERSION = "2023-10-16"
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    "DEFAULT_FILTER_BACKENDS": ['django_filters.rest_framework.DjangoFilterBackend']
 }
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_TIMEZONE = "Europe/Kiev"
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "1208petrova@gmail.com"
+EMAIL_HOST_PASSWORD = "vhxw cptd rzqh bdxm"
+
+TELEGRAM_TOKEN = "6822246707:AAGC2yL1-MrSkqc4LfdRlipAPz-Zz7PuPus"
+TELEGRAM_CHAT_ID = "681868945"
