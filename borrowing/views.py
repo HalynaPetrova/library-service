@@ -22,13 +22,17 @@ class BorrowingPagination(PageNumberPagination):
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
-    queryset = Borrowing.objects.all()
+    queryset = Borrowing.objects.select_related("user", "book")
     filter_backends = (DjangoFilterBackend,)
     filterset_class = BorrowingFilter
     pagination_class = BorrowingPagination
 
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user)
+
+        if self.action == "list":
+            queryset = queryset.prefetch_related("payments__borrowing")
+
         return queryset
 
     def get_serializer_class(self):

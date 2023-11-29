@@ -19,12 +19,13 @@ class PaymentPagination(PageNumberPagination):
 
 
 class PaymentViewSet(viewsets.ModelViewSet):
-    queryset = Payment.objects.all()
+    queryset = Payment.objects.select_related("user", "borrowing")
     serializer_class = PaymentSerializer
     pagination_class = PaymentPagination
 
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user)
+
         return queryset
 
     def get_serializer_class(self):
