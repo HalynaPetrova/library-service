@@ -9,8 +9,12 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-89xo3)@_rf-$*4190m9phck(k4kvwj@dn5(-74-9^t2mr@z0g7"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -140,9 +144,10 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-STRIPE_PUBLISHABLE_KEY = "pk_test_51OFYbrCGQz4vFj5bBwAjO93rIeTx13Vpdow1JCBXqkAV8oxoqkYozxTBhtWx0PLe3jW912Woh1DpBvNvLswSmCjD00ruUTzauC"
-STRIPE_SECRET_KEY = "sk_test_51OFYbrCGQz4vFj5bgtmZOOtlTULXjIWVlt0c0uZBc7BSX0yVyw0z5N8yt3PWxkaNHZz1r3ioKMwhZAZ57QxKDPSD00OHlM4kZR"
-STRIPE_API_VERSION = "2023-10-16"
+
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -170,11 +175,11 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "1208petrova@gmail.com"
-EMAIL_HOST_PASSWORD = "vhxw cptd rzqh bdxm"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-TELEGRAM_TOKEN = "6822246707:AAGC2yL1-MrSkqc4LfdRlipAPz-Zz7PuPus"
-TELEGRAM_CHAT_ID = "681868945"
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
 
 SPECTACULAR_SETTINGS = {
