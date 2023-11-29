@@ -1,4 +1,5 @@
 from rest_framework import status, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from payment.models import Payment
@@ -11,9 +12,16 @@ from payment.serializers import (
 )
 
 
+class PaymentPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    pagination_class = PaymentPagination
 
     def get_serializer_class(self):
         serializer_class = self.serializer_class
@@ -29,17 +37,17 @@ class SuccessPaymentView(APIView):
     def get(self, request, *args, **kwargs):
         session_id = request.GET.get("session_id")
         payment = Payment.objects.filter(session_id=session_id).first()
+
         if payment:
             payment.status = "PAID"
             payment.save()
-
             return Response(
                 {"message": "Your payment was successful"},
                 status=status.HTTP_200_OK
             )
         else:
             return Response(
-                {"message": "Payment not found or already processed"},
+                {"message": "Payment not found or still processing"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -52,7 +60,7 @@ class CancelPaymentView(APIView):
 
         if payment:
             return Response(
-                {"message": "Please wait, payment can be paid later"},
+                {"message": "Payment failed. Please try again later"},
                 status=status.HTTP_200_OK,
             )
         else:

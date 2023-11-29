@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from borrowing.filters import BorrowingFilter
@@ -14,10 +15,17 @@ from borrowing.serializers import (
 )
 
 
+class BorrowingPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class BorrowingViewSet(viewsets.ModelViewSet):
     queryset = Borrowing.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = BorrowingFilter
+    pagination_class = BorrowingPagination
 
     def get_serializer_class(self):
         if self.action == "list":
