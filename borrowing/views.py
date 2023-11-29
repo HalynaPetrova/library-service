@@ -1,4 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -64,3 +66,40 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data,
                         status=status.HTTP_200_OK)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "user",
+                type=OpenApiTypes.INT,
+                description="Filter by user id (ex. ?user=1)",
+            ),
+            OpenApiParameter(
+                "book__title",
+                type=OpenApiTypes.STR,
+                description="Filter by book title (ex. ?book__title=book)",
+            ),
+            OpenApiParameter(
+                "is_active",
+                type=OpenApiTypes.BOOL,
+                description="Filter by is active (ex. ?is_active=True)",
+            ),
+            OpenApiParameter(
+                "borrow_date",
+                type=OpenApiTypes.DATE,
+                description="Filter by borrow date (ex. ?borrow_date=DD-MM-YYYY)",
+            ),
+            OpenApiParameter(
+                "borrow_date__lt",
+                type=OpenApiTypes.DATE,
+                description="Filter by borrow date lt (ex. ?borrow_date__lt=DD-MM-YYYY)",
+            ),
+            OpenApiParameter(
+                "borrow_date__gt",
+                type=OpenApiTypes.DATE,
+                description="Filter by borrow date gt (ex. ?borrow_date__gt=DD-MM-YYYY)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)

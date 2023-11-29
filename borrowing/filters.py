@@ -18,8 +18,8 @@ class BorrowingFilter(filters.FilterSet):
     class Meta:
         model = Borrowing
         fields = [
-            "book",
             "user",
+            "book__title",
             "is_active",
             "borrow_date",
             "borrow_date__lt",

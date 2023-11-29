@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django_filters",
     "debug_toolbar",
     "django_celery_beat",
+    "drf_spectacular",
     "user",
     "book",
     "borrowing",
@@ -144,6 +145,7 @@ STRIPE_SECRET_KEY = "sk_test_51OFYbrCGQz4vFj5bgtmZOOtlTULXjIWVlt0c0uZBc7BSX0yVyw
 STRIPE_API_VERSION = "2023-10-16"
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": ['django_filters.rest_framework.DjangoFilterBackend'],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -173,3 +175,18 @@ EMAIL_HOST_PASSWORD = "vhxw cptd rzqh bdxm"
 
 TELEGRAM_TOKEN = "6822246707:AAGC2yL1-MrSkqc4LfdRlipAPz-Zz7PuPus"
 TELEGRAM_CHAT_ID = "681868945"
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Social-Media API",
+    "DESCRIPTION": "Social-Media service",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "defaultModelRendering": "model",
+        "defaultModelsExpandDepth": 2,
+        "defaultModelExpandDepth": 2,
+    }
+
+}
