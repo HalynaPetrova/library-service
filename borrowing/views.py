@@ -27,6 +27,10 @@ class BorrowingViewSet(viewsets.ModelViewSet):
     filterset_class = BorrowingFilter
     pagination_class = BorrowingPagination
 
+    def get_queryset(self):
+        queryset = self.queryset.filter(user=self.request.user)
+        return queryset
+
     def get_serializer_class(self):
         if self.action == "list":
             return BorrowingListSerializer
@@ -37,6 +41,9 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         if self.action == "return_borrowing":
             return BorrowingReturnSerializer
         return BorrowingSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     @action(
         methods=["PATCH"],

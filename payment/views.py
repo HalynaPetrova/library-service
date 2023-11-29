@@ -23,6 +23,10 @@ class PaymentViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentSerializer
     pagination_class = PaymentPagination
 
+    def get_queryset(self):
+        queryset = self.queryset.filter(user=self.request.user)
+        return queryset
+
     def get_serializer_class(self):
         serializer_class = self.serializer_class
 
@@ -31,6 +35,9 @@ class PaymentViewSet(viewsets.ModelViewSet):
         elif self.action == "retrieve":
             serializer_class = PaymentDetailSerializer
         return serializer_class
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class SuccessPaymentView(APIView):
