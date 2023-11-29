@@ -1,9 +1,11 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import filters
 
 from book.models import Genre, Book
+from book.permission import IsAdminCreateUpdateDeleteOnly
 from book.serializers import (
     GenreSerializer,
     BookSerializer,
@@ -16,11 +18,13 @@ from book.serializers import (
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (IsAdminUser, )
 
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.select_related("genre", )
     serializer_class = BookSerializer
+    permission_classes = (IsAdminCreateUpdateDeleteOnly,)
     filter_backends = [filters.SearchFilter]
     search_fields = ["title", "author", "genre__name"]
 
