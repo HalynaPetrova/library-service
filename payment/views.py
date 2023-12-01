@@ -2,9 +2,11 @@ from rest_framework import status, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
+from borrowing.permissions import IsAdminOrIsOwner
 from payment.models import Payment
 from rest_framework.views import APIView
 
+from payment.permissions import ReadOnly
 from payment.serializers import (
     PaymentSerializer,
     PaymentListSerializer,
@@ -21,6 +23,7 @@ class PaymentPagination(PageNumberPagination):
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.select_related("user", "borrowing")
     serializer_class = PaymentSerializer
+    permission_classes = (ReadOnly, IsAdminOrIsOwner,)
     pagination_class = PaymentPagination
 
     def get_queryset(self):
