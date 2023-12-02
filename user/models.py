@@ -34,8 +34,16 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    class Notification(models.TextChoices):
+        EMAIL = "email", "email"
+        TELEGRAM = "telegram", "telegram"
     username = None
     email = models.EmailField(_("email address"), unique=True)
+    notification = models.CharField(
+        max_length=25,
+        choices=Notification.choices,
+        default=Notification.EMAIL,
+    )
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
     objects = UserManager()
