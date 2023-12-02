@@ -71,4 +71,7 @@ class BookDetailSerializer(serializers.ModelSerializer):
 class BookImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ("id", "image", )
+        fields = (
+            "id",
+            "image",
+        )

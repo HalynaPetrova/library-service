@@ -6,7 +6,10 @@ from rest_framework.test import APIClient
 
 from book.models import Book, Genre
 from borrowing.models import Borrowing
-from borrowing.serializers import BorrowingListSerializer, BorrowingDetailSerializer
+from borrowing.serializers import (
+    BorrowingListSerializer,
+    BorrowingDetailSerializer,
+)
 
 BORROWING_URL = reverse("borrowing:borrowing-list")
 

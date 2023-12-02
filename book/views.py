@@ -17,13 +17,15 @@ from book.serializers import (
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (IsAdminOrReadOnly, )
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.select_related("genre", )
+    queryset = Book.objects.select_related(
+        "genre",
+    )
     serializer_class = BookSerializer
-    permission_classes = (IsAdminOrReadOnly, )
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = [filters.SearchFilter]
     search_fields = ["title", "author", "genre__name"]
 

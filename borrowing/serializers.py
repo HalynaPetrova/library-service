@@ -129,7 +129,8 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
 
         if book.inventory < 1:
             raise serializers.ValidationError(
-                f"Unfortunately, this book is not available, please choose another."
+                "Unfortunately, this book is not available, "
+                "please choose another."
             )
         return attrs
 
@@ -137,7 +138,9 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         book = validated_data["book"]
         user = self.context["request"].user
         expected_return = datetime.date.today()
-        days_in_month = calendar.monthrange(expected_return.year, expected_return.month)[1]
+        days_in_month = calendar.monthrange(
+            expected_return.year, expected_return.month
+        )[1]
         expected_return += datetime.timedelta(days=days_in_month)
         borrowing = Borrowing.objects.create(
             book=book,

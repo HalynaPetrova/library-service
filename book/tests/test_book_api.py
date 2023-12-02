@@ -23,7 +23,6 @@ def sample_book(**params):
         "author": "Test",
         "inventory": 10,
         "daily_fee": 10.20,
-
     }
 
     defaults.update(params)

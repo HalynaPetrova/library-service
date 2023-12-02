@@ -8,7 +8,8 @@ class Borrowing(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="borrowings")
+        related_name="borrowings"
+    )
     book = models.ForeignKey(
         Book,
         on_delete=models.CASCADE,

@@ -18,9 +18,7 @@ def create_payment(borrowing, session):
         borrowing=borrowing,
         user=borrowing.user,
     )
-    payment.money_to_pay = round(
-        money_to_pay(borrowing) / 100, 2
-    )
+    payment.money_to_pay = round(money_to_pay(borrowing) / 100, 2)
     payment.save()
     return payment
 

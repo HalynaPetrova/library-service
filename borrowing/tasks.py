@@ -32,7 +32,10 @@ def send_message_about_borrowing_creation_email(borrowing, user) -> None:
 
 @shared_task
 def send_message_about_borrowing_return_email(borrowing, user) -> None:
-    subject = f"Your borrowing {borrowing.id} on library service has been successfully closed"
+    subject = (
+        f"Your borrowing {borrowing.id} "
+        f"on library service has been successfully closed"
+    )
     message = (
         f"Your borrowing has been successfully closed!\n\n"
         f"Borrowing details:\n"
@@ -56,7 +59,8 @@ def send_message_about_borrowing_overdue_email() -> None:
     ):
         subject = f"You are overdue for library services"
         message = (
-            f"Dear {info.user.first_name} {info.user.last_name}!\n"
+            f"Dear {info.user.first_name} "
+            f"{info.user.last_name}!\n"
             f"You are overdue for library services!\n\n"
             f"Borrowing details:\n"
             f"ID: {info.id}\n"
@@ -69,11 +73,15 @@ def send_message_about_borrowing_overdue_email() -> None:
         )
         sender = "1208petrova@gmail.com"
 
-        return send_mail(subject, message, sender, [info.user.email])
+        return send_mail(
+            subject, message, sender, [info.user.email]
+        )
 
 
 @shared_task
-def send_message_about_borrowing_creation_telegram(borrowing: Borrowing) -> None:
+def send_message_about_borrowing_creation_telegram(
+        borrowing: Borrowing
+) -> None:
     message = (
         f"Your borrowing has been successfully created!\n\n"
         f"Borrowing details:\n"

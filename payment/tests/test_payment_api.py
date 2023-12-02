@@ -39,7 +39,7 @@ def sample_payment(**params):
         "borrowing": borrowing,
         "session_url": "https://checkout.stripe.com",
         "session_id": "cs_test",
-        "money_to_pay": "10.20"
+        "money_to_pay": "10.20",
     }
     defaults.update(params)
     return Payment.objects.create(**defaults)
@@ -72,7 +72,6 @@ class AuthenticatedPaymentApiTest(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data["results"], serializer.data)
 
-
     def test_create_payment_forbidden(self):
         user = get_user_model().objects.create_user(
             "test2@test.com",
@@ -99,7 +98,7 @@ class AuthenticatedPaymentApiTest(TestCase):
         res = self.client.post(PAYMENT_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
-#
+    #
     def test_update_payment_forbidden(self):
         payment = sample_payment()
         user = get_user_model().objects.create_user(
@@ -179,7 +178,7 @@ class AdminPaymentApiTest(TestCase):
         res = self.client.post(PAYMENT_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
-#
+    #
     def test_update_payment_forbidden(self):
         payment = sample_payment()
         user = get_user_model().objects.create_user(

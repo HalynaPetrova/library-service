@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 class UserManager(BaseUserManager):
-
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -37,6 +36,7 @@ class User(AbstractUser):
     class Notification(models.TextChoices):
         EMAIL = "email", "email"
         TELEGRAM = "telegram", "telegram"
+
     username = None
     email = models.EmailField(_("email address"), unique=True)
     notification = models.CharField(

@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from borrowing.models import Borrowing
 from payment.models import Payment
-from payment.stripo import create_stripe_session
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -32,11 +31,8 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class PaymentListSerializer(PaymentSerializer):
-    user = serializers.CharField(
-        source="user.email",
-        read_only=True)
-    borrowing_book = serializers.CharField(
-        source="borrowing.book.title")
+    user = serializers.CharField(source="user.email", read_only=True)
+    borrowing_book = serializers.CharField(source="borrowing.book.title")
 
     class Meta:
         model = Payment
@@ -73,6 +69,5 @@ class PaymentBorrowingSerializer(serializers.ModelSerializer):
 
 
 class PaymentDetailSerializer(PaymentSerializer):
-    user = serializers.CharField(
-        source="user.email")
+    user = serializers.CharField(source="user.email")
     borrowing = PaymentBorrowingSerializer(many=False, read_only=True)

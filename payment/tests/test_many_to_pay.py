@@ -12,6 +12,7 @@ class NewDate(datetime.date):
     @classmethod
     def today(cls):
         return cls(2023, 11, 10)
+
     # def __str__(self):
     #     return f"{self.createdAt.strftime('20231101', '%Y%m%d').date()}"
 
@@ -43,21 +44,16 @@ class StripeTest(TestCase):
 
     def test_calculate_money_to_pay(self):
         print(datetime.date.today(), type(datetime.date.today()))
-        self.borrowing.borrow_date = datetime.datetime.strptime("20231101", '%Y%m%d').date()
-        self.borrowing.expected_return = datetime.datetime.strptime("20231130", '%Y%m%d').date()
+        self.borrowing.borrow_date = datetime.datetime.strptime(
+            "20231101", "%Y%m%d"
+        ).date()
+        self.borrowing.expected_return = datetime.datetime.strptime(
+            "20231130", "%Y%m%d"
+        ).date()
         self.borrowing.save()
-        price_in_cents = money_to_pay(self.borrowing)/100
+        price_in_cents = money_to_pay(self.borrowing) / 100
         expected_price_in_cents = 101.2
         self.assertEqual(price_in_cents, expected_price_in_cents)
-
-
-
-
-
-
-
-
-
 
     # def test_calculate_money_to_pay(self):
     #     print(datetime.date.today())
@@ -73,8 +69,6 @@ class StripeTest(TestCase):
     #     expected_price_in_cents = 101.2
     #     self.assertEqual(price_in_cents, expected_price_in_cents)
 
-
-
     # def test_calculate_money_to_pay(self):
     #     self.borrowing.expected_return = DT.datetime.strptime("20231229", '%Y%m%d').date()
     #     self.borrowing.borrow_date = DT.datetime.strptime("20231201", '%Y%m%d').date()
@@ -83,7 +77,6 @@ class StripeTest(TestCase):
     #     expected_price_in_cents = 20.20
     #     self.assertEqual(price_in_cents, expected_price_in_cents)
     #
-
 
     # def test_calculate_money_to_pay_overdue(self):
     #     self.borrowing.expected_return = DT.datetime.strptime("20231201", '%Y%m%d').date()

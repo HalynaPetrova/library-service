@@ -23,7 +23,10 @@ class PaymentPagination(PageNumberPagination):
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.select_related("user", "borrowing")
     serializer_class = PaymentSerializer
-    permission_classes = (ReadOnly, IsAdminOrIsOwner,)
+    permission_classes = (
+        ReadOnly,
+        IsAdminOrIsOwner,
+    )
     pagination_class = PaymentPagination
 
     def get_queryset(self):
@@ -66,8 +69,7 @@ class SuccessPaymentView(APIView):
 class CancelPaymentView(APIView):
     def get(self, request, *args, **kwargs):
         borrowing_id = kwargs.get("pk")
-        payment = Payment.objects.filter(
-            borrowing_id=borrowing_id).first()
+        payment = Payment.objects.filter(borrowing_id=borrowing_id).first()
 
         if payment:
             return Response(

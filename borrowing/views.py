@@ -27,8 +27,11 @@ class BorrowingPagination(PageNumberPagination):
 
 class BorrowingViewSet(viewsets.ModelViewSet):
     queryset = Borrowing.objects.select_related("user", "book")
-    permission_classes = (IsAuthenticated, IsAdminOrIsOwner, )
-    filter_backends = (DjangoFilterBackend, )
+    permission_classes = (
+        IsAuthenticated,
+        IsAdminOrIsOwner,
+    )
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = BorrowingFilter
     pagination_class = BorrowingPagination
 
@@ -61,17 +64,15 @@ class BorrowingViewSet(viewsets.ModelViewSet):
         methods=["PATCH"],
         detail=True,
         url_path="return",
-
     )
     def return_borrowing(self, request, pk=None):
-
         serializer = self.get_serializer(
             instance=self.get_object(),
-            data=request.data)
+            data=request.data,
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data,
-                        status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
         parameters=[
@@ -83,27 +84,32 @@ class BorrowingViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 "book__title",
                 type=OpenApiTypes.STR,
-                description="Filter by book title (ex. ?book__title=book)",
+                description="Filter by book title "
+                            "(ex. ?book__title=book)",
             ),
             OpenApiParameter(
                 "is_active",
                 type=OpenApiTypes.BOOL,
-                description="Filter by is active (ex. ?is_active=True)",
+                description="Filter by is active "
+                            "(ex. ?is_active=True)",
             ),
             OpenApiParameter(
                 "borrow_date",
                 type=OpenApiTypes.DATE,
-                description="Filter by borrow date (ex. ?borrow_date=DD-MM-YYYY)",
+                description="Filter by borrow date "
+                            "(ex. ?borrow_date=DD-MM-YYYY)",
             ),
             OpenApiParameter(
                 "borrow_date__lt",
                 type=OpenApiTypes.DATE,
-                description="Filter by borrow date lt (ex. ?borrow_date__lt=DD-MM-YYYY)",
+                description="Filter by borrow date lt "
+                "(ex. ?borrow_date__lt=DD-MM-YYYY)",
             ),
             OpenApiParameter(
                 "borrow_date__gt",
                 type=OpenApiTypes.DATE,
-                description="Filter by borrow date gt (ex. ?borrow_date__gt=DD-MM-YYYY)",
+                description="Filter by borrow date gt "
+                "(ex. ?borrow_date__gt=DD-MM-YYYY)",
             ),
         ]
     )
