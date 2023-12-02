@@ -5,10 +5,14 @@ from rest_framework import serializers
 
 from book.serializers import BookListSerializer
 from borrowing.models import Borrowing
-from borrowing.tasks import send_message_about_borrowing_creation_email, send_message_about_borrowing_return_email, \
-    send_message_about_borrowing_creation_telegram
+from borrowing.tasks import (
+    send_message_about_borrowing_creation_email,
+    send_message_about_borrowing_return_email,
+    send_message_about_borrowing_creation_telegram,
+    send_message_about_borrowing_return_telegram,
+)
 from payment.models import Payment
-from payment.stripo import create_stripe_session
+from payment.stripe import create_stripe_session
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
@@ -73,6 +77,10 @@ class BorrowingPaymentSerializer(serializers.ModelSerializer):
 
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(
+        source="user.email",
+        read_only=True,
+    )
     book = BookListSerializer(many=False, read_only=True)
     payments = BorrowingPaymentSerializer(many=True, read_only=True)
 
@@ -80,6 +88,7 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
         model = Borrowing
         fields = (
             "id",
+            "user",
             "book",
             "borrow_date",
             "expected_return",
@@ -137,7 +146,7 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         )
         book.inventory -= 1
         book.save()
-        if user.NotificationType.Email:
+        if user.notification == "email":
             send_message_about_borrowing_creation_email(borrowing, user)
         else:
             send_message_about_borrowing_creation_telegram(borrowing)
@@ -193,9 +202,8 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
         instance.book.inventory += 1
         instance.book.save()
         instance.save()
-        send_message_about_borrowing_return_email(instance, user)
-        if user.NotificationType.Email:
-            send_message_of_borrowing_return_email(instance, user)
+        if user.notification == "email":
+            send_message_about_borrowing_return_email(instance, user)
         else:
-            send_message_of_borrowing_return_telegram(instance)
+            send_message_about_borrowing_return_telegram(instance)
         return instance
