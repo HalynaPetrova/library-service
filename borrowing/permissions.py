@@ -2,7 +2,7 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsAdminOrIsOwner(BasePermission):
-    edit_methods = ("PUT", "PATCH", "DELETE",)
+    edit_methods = ("PUT", "DELETE", )
 
     def has_permission(self, request, view):
         return bool(

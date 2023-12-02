@@ -4,10 +4,12 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from borrowing.filters import BorrowingFilter
 from borrowing.models import Borrowing
+from borrowing.permissions import IsAdminOrIsOwner
 from borrowing.serializers import (
     BorrowingSerializer,
     BorrowingListSerializer,
@@ -25,15 +27,19 @@ class BorrowingPagination(PageNumberPagination):
 
 class BorrowingViewSet(viewsets.ModelViewSet):
     queryset = Borrowing.objects.select_related("user", "book")
-    filter_backends = (DjangoFilterBackend,)
+    permission_classes = (IsAuthenticated, IsAdminOrIsOwner, )
+    filter_backends = (DjangoFilterBackend, )
     filterset_class = BorrowingFilter
     pagination_class = BorrowingPagination
 
     def get_queryset(self):
-        queryset = self.queryset.filter(user=self.request.user)
+        queryset = self.queryset.all()
 
         if self.action == "list":
-            queryset = queryset.prefetch_related("payments__borrowing")
+            queryset = self.queryset.prefetch_related("payments__borrowing")
+
+            if not self.request.user.is_staff:
+                queryset = self.queryset.filter(user=self.request.user)
 
         return queryset
 
