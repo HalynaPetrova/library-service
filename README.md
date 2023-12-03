@@ -67,5 +67,4 @@ The RESTful API for a library service platform.
 
 ## BD structure
 
-![library_service](https://github.com/HalynaPetrova/library-service-api/assets/92261713/93c1ef93-f6b0-4188-b1c9-b187aff85981)
-
+![library_service.png](..%2F..%2F%D0%97%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F%2Flibrary_service.png)
