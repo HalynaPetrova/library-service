@@ -66,5 +66,4 @@ The RESTful API for a library service platform.
 - Get access token via: user/token
 
 ## BD structure
-
-![library_service](https://github.com/HalynaPetrova/library-service-api/assets/92261713/eeebf549-24b4-48ca-8ee4-dddc52fce750)
+![library](https://github.com/HalynaPetrova/library-service/assets/92261713/f7853325-44b8-4c71-9866-21979446716f)
